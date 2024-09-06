@@ -1,4 +1,4 @@
-const Cart = require("../../Model/ProductModel/CartModel");
+const Cart = require("../../Model/ProductModel/Cart.model");
 const Products = require("../../Model/ProductModel/ProductsModel");
 
 exports.getAllProducts = async (req, res) => {
@@ -28,3 +28,5 @@ exports.getCartItem = async (req, res) => {
     res.status(400).json({ status: 400, message: "no item in cart" });
   }
 };
+
+

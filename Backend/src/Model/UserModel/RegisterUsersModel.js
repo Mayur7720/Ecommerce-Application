@@ -10,13 +10,14 @@ const RegisterUserSchema = new mongoose.Schema(
 
 RegisterUserSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    // const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, 10);
   }
   next();
 });
 RegisterUserSchema.methods.checkUser = async function (password) {
-  const check = bcrypt.compare(password, this.password);
+  const check = await bcrypt.compare(password, this.password);
+  console.log(check);
   if (check) {
     return check;
   }

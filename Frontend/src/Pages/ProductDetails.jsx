@@ -33,7 +33,7 @@ function ProductDetails() {
     <section className="text-black px-4 ">
       <article className="flex gap-3 ">
         <div>
-          <div className="flex  w-[32rem] ">
+          <div className="flex w-[32rem] ">
             <picture className="w-1/6 active  ">
               {singleProduct?.images.map((productImg, idx) => (
                 <img

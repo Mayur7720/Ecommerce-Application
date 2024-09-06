@@ -18,7 +18,6 @@ const UserSchema = new mongoose.Schema(
     },
     pincode: {
       type: Number,
-
       require: [true, "pincode is required"],
     },
     mobileNo: {

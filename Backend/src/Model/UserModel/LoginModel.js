@@ -8,6 +8,5 @@ const ExisitingUserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-
-const ExisitingUser = mongoose.model("ExisitingUser", ExisitingUserSchema);
-module.exports = ExisitingUser;
+const Login = mongoose.model("Login", ExisitingUserSchema);
+module.exports = Login;

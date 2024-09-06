@@ -14,7 +14,7 @@ function Cards({ products }) {
     price: "not selected",
   });
   const [filteredData, setFilteredData] = useState(products);
-  const { isDialogOpen, setIsDialogOpen } = useCart();
+  const { isDialogOpen, setIsDialogOpen, cartItems, setCartItems } = useCart();
   const navigate = useNavigate();
   const closeDialog = () => {
     setIsDialogOpen(false);
@@ -45,9 +45,31 @@ function Cards({ products }) {
     options: ["not selected", "500", "600", "7000", "90000", "100000"],
   };
 
-  const addToCart = (e, product) => {
+  useEffect(() => {
+    addToCart();
+  }, []);
+  const addToCart = async (e, product) => {
     e.stopPropagation();
-    setCartProducts((prevState) => [...prevState, product]);
+    // setCartProducts((prevState) => [...prevState, product]);
+    // setCartItems((prevState) => [...prevState, product]);
+    console.log(product._id);
+    const id = product._id;
+    try {
+      const response = await fetch(
+        `http://localhost:4000/api/v1/products/${product._id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ increment: 1 }),
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+    } catch (err) {
+      console.log(er);
+    }
   };
 
   const handleChange = (e) => {
@@ -72,7 +94,11 @@ function Cards({ products }) {
     });
     setFilteredData(filteredData);
   }, [filterProducts, products]);
-console.log(cartProducts)
+  console.log(cartProducts);
+
+  // const addToCart = (id) => {
+  //   fetch(`http://localhost:4000/api/v1/products/${id}`,)
+  // };
   return (
     <section className=" p-4 ">
       <div className="text-black mb-4 bg-slate-300 p-1 flex justify-evenly items-center">
