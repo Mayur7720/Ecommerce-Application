@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Button from "../Components/Button";
+import Button from "../../Components/Button";
 import { FaStar } from "@react-icons/all-files/fa/FaStar";
 import { FaRupeeSign } from "@react-icons/all-files/fa/FaRupeeSign";
 import "./ProductDetails.module.css";
-import RatingAndReviews from "../Components/RatingAndReviews";
+import RatingAndReviews from "../../Components/RatingAndReviews";
 function ProductDetails() {
   const [singleProduct, setSingleProduct] = useState();
   const [isActive, setIsActive] = useState(0);
@@ -13,7 +13,7 @@ function ProductDetails() {
     const fetchSingleProduct = async (id) => {
       try {
         const response = await fetch(
-          `http://localhost:4000/api/v1/products/${urlId.id}`,
+          `${process.env.API_URL}/products/${urlId.id}`,
           { method: "GET", headers: { "Content-Type": "application/json" } }
         );
         const data = await response.json();
@@ -24,17 +24,19 @@ function ProductDetails() {
     };
     fetchSingleProduct();
   }, []);
-  // console.log(singleProduct);
+
   const handleClickImage = (idx) => {
     setIsActive(idx);
   };
-
+  const handleClick = (e) => {
+    console.log(e.target);
+  };
   return (
     <section className="text-black px-4 ">
       <article className="flex gap-3 ">
-        <div>
+        <div className="">
           <div className="flex w-[32rem] ">
-            <picture className="w-1/6 active  ">
+            <picture className="w-1/6 active ">
               {singleProduct?.images.map((productImg, idx) => (
                 <img
                   className={`gridImage ${
@@ -58,10 +60,12 @@ function ProductDetails() {
                 <Button
                   className="bg-amber-500 w-full text-white font-semibold px-4 py-3"
                   label={"ADD TO CART"}
+                  onClick={handleClick}
                 />
                 <Button
                   className="bg-orange-500 w-full text-white font-semibold px-4 py-3"
                   label={"BUY NOW"}
+                  onClick={handleClick}
                 />
               </div>
             </picture>

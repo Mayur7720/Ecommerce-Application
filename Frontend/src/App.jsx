@@ -1,16 +1,16 @@
 import "./App.css";
 import RootLayout from "./Layout/RootLayout";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import ProductsPage from "./Pages/ProductsPage";
+import ProductsPage from "./Pages/Products/ProductsPage";
 import { CartProvider } from "./Context/CartProvider";
 import Register from "./Pages/Register/Register";
 import Login from "./Pages/Login/Login";
-import ProductDetails from "./Pages/ProductDetails";
+import ProductDetails from "./Pages/Products/ProductDetails";
 import ProfileLayout from "./Layout/ProfileLayout";
 import Info from "./Pages/Profile/Info";
 import YourOrder from "./Pages/Profile/YourOrder";
 import Wishlist from "./Pages/Profile/Wishlist";
-import Cart from "./Pages/Cart";
+import Cart from "./Pages/Products/Cart";
 
 function App() {
   const router = createBrowserRouter([

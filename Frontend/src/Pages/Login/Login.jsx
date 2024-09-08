@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import FormData from "../../Components/FormData";
 import ErrorMsg from "../../Components/ErrorMsg";
@@ -7,49 +7,51 @@ import ErrorMsg from "../../Components/ErrorMsg";
 function Login() {
   const [alert, setAlert] = useState({ show: false, message: "", color: "" });
   const [userData, setUserData] = useState([]);
-  const handleLogin = (submitData) => {
-    console.log(submitData);
-    fetch(`http://localhost:4000/api/v1/user/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(submitData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === 200) {
-          setAlert({
-            show: true,
-            message: data.message,
-            color: "bg-green-200",
-          });
-          setUserData(data.token);
-        } else {
-          console.log("Registration failed:", data.message);
-          setAlert({
-            show: true,
-            message: "Registration failed: " + data.message,
-            color: "bg-red-200",
-          });
-        }
-      })
-      .catch((error) => {
+  const navigate = useNavigate();
+  const handleLogin = async (submitData) => {
+    try {
+      const response = await fetch(`${process.env.API_URL}/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(submitData),
+      });
+      const data = await response.json();
+
+      localStorage.setItem("token", data.token);
+      if (data.status === 200 || data.status <= 299) {
         setAlert({
           show: true,
-          message: "Error: Unable to login",
+          message: data.message,
+          color: "bg-green-200",
+        });
+        navigate("/dashboard");
+        setUserData(data.token);
+      } else {
+        console.log("Registration failed:", data.message);
+        setAlert({
+          show: true,
+          message: "Registration failed: " + data.message,
           color: "bg-red-200",
         });
-        console.log("Error:", error);
+      }
+    } catch (error) {
+      setAlert({
+        show: true,
+        message: "Error: Unable to login",
+        color: "bg-red-200",
       });
+      console.log("Error:", error);
+    }
   };
 
   const handleCloseAlert = () => {
     setAlert({ show: false, message: "", color: "" });
   };
-  if (userData.length > 0) {
-    console.log(jwtDecode(userData));
-  }
+  // if (userData.length > 0) {
+  //   console.log(jwtDecode(userData));
+  // }
   return (
     <>
       {alert.show && (

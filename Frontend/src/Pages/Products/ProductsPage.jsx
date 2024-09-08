@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import Banner from "../Components/Banner";
-import Cards from "../Components/Cards";
+import Banner from "../../Components/Banner";
+import Cards from "../../Components/Cards";
+import ProductFilter from "../../Components/ProductFilter";
 
 function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -9,7 +10,7 @@ function ProductsPage() {
   }, []);
   const fetchProducts = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/v1/products", {
+      const res = await fetch(`${process.env.API_URL}/products`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -19,13 +20,17 @@ function ProductsPage() {
       setProducts(data.data.product);
     } catch (err) {
       console.log("GET is ", err);
-    
     }
   };
   return (
     <section className="bg-slate-200 h-full">
       <Banner />
-      <Cards products={products} />
+      <section className="p-4">
+        <ProductFilter />
+        <div className="flex gap-5 mx-8 flex-wrap bg-black">
+          <Cards products={products} />
+        </div>
+      </section>
     </section>
   );
 }

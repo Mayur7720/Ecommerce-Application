@@ -6,7 +6,6 @@ import ErrorMsg from "../../Components/ErrorMsg";
 function Register() {
   const [alert, setAlert] = useState({ show: false, message: "", color: "" });
   const handleRegister = (submitData) => {
-
     fetch(`http://localhost:4000/api/v1/user/newUser`, {
       method: "POST",
       headers: {
@@ -16,7 +15,7 @@ function Register() {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.status === 200) {
+        if (data.status === 200 || data.status <= 299) {
           setAlert({
             show: true,
             message: data.message,
