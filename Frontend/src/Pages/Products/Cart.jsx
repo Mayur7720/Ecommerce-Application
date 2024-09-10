@@ -6,7 +6,7 @@ function Cart() {
   const {cartItems}=useCart()
   console.log(cartItems)
   return (
-    <section className='px-4 bg-slate-100 h-screen'>
+    <section className='px-4 bg-slate-100 h-full'>
        <CartBanners/>
     </section>
   )

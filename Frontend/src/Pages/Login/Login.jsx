@@ -29,10 +29,10 @@ function Login() {
         navigate("/dashboard");
         setUserData(data.token);
       } else {
-        console.log("Registration failed:", data.message);
+        console.log("Login failed:", data.message);
         setAlert({
           show: true,
-          message: "Registration failed: " + data.message,
+          message: "Login failed: " + data.message,
           color: "bg-red-200",
         });
       }

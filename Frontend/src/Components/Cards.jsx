@@ -29,7 +29,7 @@ function Cards({ products }) {
     console.log(userId);
     try {
       const response = await fetch(
-        `http://localhost:4000/api/v1/cart/${product._id}`,
+        `${process.env.API_URL}/cart/${product._id}`,
         {
           method: "POST",
           headers: {
@@ -73,7 +73,7 @@ function Cards({ products }) {
               key={product._id}
               className="border hover:cursor-pointer max-h-72 flex flex-col w-48 overflow-hidden rounded-md shadow-lg shadow-black/20 relative "
             >
-              <div className="hover:scale-105 ease-in duration-200 hover:shadow-black/40 bg-white h-3/4 min-h-[190px]">
+              <div className="hover:scale-105 ease-in duration-200 hover:shadow-black/40 bg-slate-300 h-3/4 min-h-[190px]">
                 <img
                   src={product.images[0] || product.images[idx]}
                   className="w-full object-fit h-4/3"
@@ -104,44 +104,7 @@ function Cards({ products }) {
             </div>
           ))
         : "No products found"}
-      {/* <Modal isOpen={isDialogOpen} onClose={closeDialog}>
-  <table className="rounded-1 w-full text-center border border-1">
-    <thead className="overflow-hidden">
-      <tr>
-        <td className=" border border-black border-1  px-2">Product</td>
-        <td className=" border border-black border-1 px-2">Price</td>
-        <td className=" border border-black border-1 px-2">Quantity</td>
-      </tr>
-    </thead>
-    <tbody className=" border border-black ">
-      {cartProducts.length > 0 ? (
-        cartProducts.map((cartProduct, idx) => (
-          <tr key={idx} className="border w-full border-black">
-            <td className="px-2 border border-black">
-              {cartProduct.title}
-            </td>
-            <td className="px-2 border border-black">
-              {cartProduct.price}
-            </td>
-            <td className=" flex justify-center py-1">
-              <button className=" rounded-full  px-2 font-bold bg-orange-500">
-                +
-              </button>
-              <p className=" px-3">dd</p>
-              <button className=" rounded-full px-2  font-bold bg-orange-500">
-                -
-              </button>
-            </td>
-          </tr>
-        ))
-      ) : (
-        <tr>
-          <td>Item not add in cart</td>
-        </tr>
-      )}
-    </tbody>
-  </table>
-</Modal> */}
+     
     </>
   );
 }
