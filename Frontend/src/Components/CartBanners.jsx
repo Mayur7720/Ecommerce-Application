@@ -17,7 +17,7 @@ function CartBanners() {
   }, []);
 
   const fetchCart = async () => {
-    console.log("ok")
+    console.log("ok");
     try {
       const userId = DecodeToken();
       const response = await fetch(`${process.env.API_URL}/cart/${userId}`);
@@ -32,10 +32,10 @@ function CartBanners() {
       setLoading(false); // End loading regardless of success or error
     }
   };
-  const handleDelete = async ( productId) => {
+  const handleDelete = async (productId) => {
     try {
       const userId = DecodeToken();
-      console.log(productId)
+      console.log(productId);
       const response = await fetch(
         `${process.env.API_URL}/cart/${userId}/product/${productId}/delete`,
         {
@@ -51,9 +51,10 @@ function CartBanners() {
         throw new Error(`Error: ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log("Product remove from cart:", data);
-      fetchCart()
+      // const data = await response.json();
+      // console.log("Product remove from cart:", data);
+      console.log("product removed from cart");
+      fetchCart();
     } catch (err) {
       console.log("Error removing product from cart:", err);
     }
@@ -78,7 +79,7 @@ function CartBanners() {
 
       const data = await response.json();
       console.log("Product quantity incremented:", data);
-      fetchCart()
+      fetchCart();
     } catch (err) {
       console.log("Error incrementing product quantity:", err);
     }
@@ -132,71 +133,90 @@ function CartBanners() {
 
       <article className="">
         {cart.length > 0 ? (
-          <table className="mx-auto w-2/3">
-            <thead className="border border-1 border-slate-300 border-l-0 border-r-0">
-              <tr>
-                <th className="text-left ">Item</th>
-                <th className="text-left ">Price</th>
-                <th className="p-2">Quantity</th>
-                <th className="p-2 text-right">Total</th>
-                <th className="p-2"></th>
-              </tr>
-            </thead>
-            <tbody className="border border-1 border-slate-300 border-l-0 border-r-0 border-t-0">
-              {cart.map((item) => (
-                <tr key={item._id}>
-                  <td className="border-b-2  max-w-56 p-2">
-                    <div className="flex items-center font-semibold gap-2">
-                      <div className="max-w-24 max-h-24 overflow-hidden rounded">
-                        <img
-                          className="w-24 h-24"
-                          src={item.image}
-                          alt="product image"
-                        />
-                      </div>
-                      <p className="truncate max-w-62 text-left ">
-                        {item.title}
-                      </p>
-                    </div>
-                  </td>
-                  <td className="border-b-2 max-w-6 truncate ">{item.price}</td>
-                  <td className="border-b-2 max-w-6">
-                    <div className="flex w-full justify-between items-center">
-                      <button
-                        onClick={(e) => {
-                          handleIncrement(e, item.product);
-                        }}
-                        className="hover:bg-amber-400 border-none shadow-md shadow-black/20 bg-amber-500 rounded-full p-1 border-black"
-                      >
-                        <FaPlus fill="black" />
-                      </button>
-                      <div>{item.quantity}</div>
-                      <button
-                        onClick={(e) => {
-                          handleDecrement(e, item.product);
-                        }}
-                        className="hover:bg-amber-400 border-none shadow-md shadow-black/20 bg-amber-500 rounded-full p-1 border-black"
-                      >
-                        <FaMinus fill="black" />
-                      </button>
-                    </div>
-                  </td>
-                  <td className="border-b-2 max-w-20">
-                    <div className=" px-2 flex gap-2 justify-center">
-                      <p>{item.totalPrice}</p>
-                    </div>
-                  </td>
-                  <td className="border-b-2  max-w-20">
-                    <div className=" px-2 flex gap-2 justify-between items-center">
-                      <button onClick={()=>handleDelete(item.product)} className=" px-2 py-2 bg-red-600 hover:bg-red-500  rounded shadow-md shadow-black/40">
-                        <FaTrash fill="white" />
-                      </button>
-                    </div>
-                  </td>
+          <>
+            <table className="mx-auto w-2/3">
+              <thead className="border border-1 border-slate-300 border-l-0 border-r-0">
+                <tr>
+                  <th className="text-left ">Item</th>
+                    <th className="text-left ">Price</th>
+                  <th className="text-left "></th>
+                  <th className="p-2">Quantity</th>
+                  <th className="text-left "></th>
+                  <th className="p-2 ">Total</th>
+                  <th className="p-2"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="border border-1 border-slate-300 border-l-0 border-r-0 border-t-0">
+                {cart.map((item) => (
+                  <tr key={item._id}>
+                    <td className="border-b-2  max-w-56 p-2">
+                      <div className="flex items-center font-semibold gap-2">
+                        <div className="max-w-24 max-h-24 overflow-hidden rounded">
+                          <img
+                            className="w-24 h-24"
+                            src={item.image}
+                            alt="product image"
+                          />
+                        </div>
+                        <p className="truncate max-w-62 text-left ">
+                          {item.title}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="border-b-2 max-w-6 truncate ">
+                      {item.price}
+                    </td>{" "}
+                    <td className="border-b-2 px-2"></td>
+                    <td className="border-b-2 max-w-6">
+                      <div className="flex w-full justify-between items-center">
+                        <button
+                          onClick={(e) => {
+                            handleIncrement(e, item.product);
+                          }}
+                          className="hover:bg-amber-400 border-none shadow-md shadow-black/20 bg-amber-500 rounded-full p-1 border-black"
+                        >
+                          <FaPlus fill="black" />
+                        </button>
+                        <div>{item.quantity}</div>
+                        <button
+                          onClick={(e) => {
+                            handleDecrement(e, item.product);
+                          }}
+                          className="hover:bg-amber-400 border-none shadow-md shadow-black/20 bg-amber-500 rounded-full p-1 border-black"
+                        >
+                          <FaMinus fill="black" />
+                        </button>
+                      </div>
+                    </td>
+                    <td className="border-b-2 px-2"></td>
+                    <td className="border-b-2 max-w-20">
+                      <div className=" px-2 flex gap-2 justify-center">
+                        <p>{item.totalPrice}</p>
+                      </div>
+                    </td>
+                    <td className="border-b-2  max-w-20">
+                      <div className=" px-2 flex gap-2 justify-between items-center">
+                        <button
+                          onClick={() => handleDelete(item.product)}
+                          className=" px-2 py-2 bg-red-600 hover:bg-red-500  rounded shadow-md shadow-black/40"
+                        >
+                          <FaTrash fill="white" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <article className="  mx-auto w-2/4 ">
+              <div className="w-1/2  float-right flex justify-between mt-4 ">
+                <p className="font-bold text-xl text-slate-900 ">Grand Total </p>
+                <span className="
+                font-semibold">=</span>
+                <p className="font-semibold">4000000</p>
+              </div>
+            </article>
+          </>
         ) : (
           <div className="text-center">No items in cart</div>
         )}

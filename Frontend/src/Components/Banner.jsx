@@ -24,27 +24,26 @@ function Banner() {
       setIndex(arrBanner.length - 1);
     }
   };
-  // useEffect(() => {
-  //   const lastIndex = arrBanner.length;
-  //   if (index === lastIndex) {
-  //     setIndex(0);
-  //   }
-  //   let bannerId = setTimeout(() => {
-  //     setIndex(index + 1);
-  //   }, 2000);
-  //   console.log(bannerId);
-  //   return () => clearTimeout(bannerId);
-  // }, [index]);
+  useEffect(() => {
+    const lastIndex = arrBanner.length;
+    if (index === lastIndex) {
+      setIndex(0);
+    }
+    let bannerId = setTimeout(() => {
+      setIndex(index + 1);
+    }, 2000);
+    return () => clearTimeout(bannerId);
+  }, [index]);
 
   return (
     <>
-      <article className={`${styles.container} bg-slate-200 my-4`}>
+      <picture className={`${styles.container} bg-slate-200 my-4`}>
         <img
           className={`${styles.banners} h-full`}
           src={`${arrBanner[index]}`}
           alt="banner"
         />
-      </article>
+      </picture>
       {/* <div>
         <button onClick={handleNavNext} className="navbtn bg-orange-500 p-4">
         +

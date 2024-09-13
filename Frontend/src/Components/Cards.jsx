@@ -61,9 +61,6 @@ function Cards({ products }) {
   }, [filterProducts, products]);
   console.log(cartProducts);
 
-  // const addToCart = (id) => {
-  //   fetch(`http://localhost:4000/api/v1/products/${id}`,)
-  // };
   return (
     <>
       {filteredData.length > 0

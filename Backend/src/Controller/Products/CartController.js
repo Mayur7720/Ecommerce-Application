@@ -1,4 +1,3 @@
-const { json } = require("express");
 const Cart = require("../../Model/ProductModel/Cart.model");
 const Products = require("../../Model/ProductModel/ProductsModel");
 const User = require("../../Model/UserModel/UserModel");
@@ -19,7 +18,7 @@ exports.addToCart = async (req, res) => {
     }
 
     let existCart = await Cart.findOne({ owner: user });
-    console.log("--->", existCart);
+
     if (existCart) {
       // Ensure that `existCart.items` is initialized properly
       existCart.items = existCart.items || [];
@@ -110,39 +109,93 @@ exports.getCart = async (req, res) => {
 exports.incrementCartQuantity = async (req, res) => {
   try {
     const { userId, productId } = req.params;
-    const cart = await Cart.updateOne(
-      {
-        owner: userId,
-        "items.product": productId,
-      },
-      { $inc: { "items.$.quantity": 1 } }
-    );
-    if (cart.matchedCount == 0) {
-      return res
-        .status(404)
-        .json({ status: 404, message: "product not found in cart" });
+
+    // Find the cart containing the item
+    const cart = await Cart.findOne({
+      owner: userId,
+      "items.product": productId,
+    });
+
+    if (!cart) {
+      return res.status(404).json({
+        status: 404,
+        message: "Cart not found",
+      });
     }
-    res
-      .status(200)
-      .json({ status: 200, message: "Product quantity incremented" });
+
+    // Find the index of the item in the cart
+    const itemIndex = cart.items.findIndex((item) => item.product.equals(productId));
+
+    if (itemIndex === -1) {
+      return res.status(404).json({
+        status: 404,
+        message: "Product not found in cart",
+      });
+    }
+
+    // Check if quantity exceeds the limit of 10
+    if (cart.items[itemIndex].quantity >= 10) {
+      return res.status(400).json({
+        status: 400,
+        message: "Quantity should be less or equal to 10",
+      });
+    }
+
+    // Increment quantity
+    cart.items[itemIndex].quantity += 1;
+
+    // Update total price of the item
+    cart.items[itemIndex].totalPrice = cart.items[itemIndex].quantity * cart.items[itemIndex].price;
+
+    // Update total cost of the cart
+    cart.total = cart.items.reduce(
+      (acc, item) => acc + item.quantity * item.price,
+      0
+    );
+
+    // Save the updated cart
+    await cart.save();
+
+    res.status(200).json({
+      status: 200,
+      message: "Product quantity incremented",
+      cart,
+    });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ status: 500, message: "Server error" });
   }
 };
 
+
 exports.decrementCartQuantity = async (req, res) => {
   try {
     const { userId, productId } = req.params;
-    const cart = await Cart.updateOne(
-      { owner: userId, "items.product": productId },
-      { $inc: { "items.$.quantity": -1 } }
+    const cart = await Cart.findOne({
+      owner: userId,
+      "items.product": productId,
+    });
+    const itemIndex = cart.items.findIndex((item) =>
+      item.product.equals(productId)
     );
-    if (cart.matchedCount == 0) {
-      return res
-        .status(404)
-        .json({ status: 404, message: "Product not found in cart" });
+    if (itemIndex == -1) {
+      return res.status(404).json({
+        status: 404,
+        message: "product not found in cart ",
+      });
     }
+    if (cart.items[itemIndex].quantity <= 0) {
+      return res
+        .status(400)
+        .json({ status: 400, message: "Quantity cannot be negative" });
+    }
+    cart.items[itemIndex].quantity -= 1;
+    cart.items[itemIndex].totalPrice =
+      cart.items[itemIndex].quantity * cart.items[itemIndex].price;
+
+    // Update total cost of the cart
+    cart.total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
+    await cart.save();
+
     res
       .status(200)
       .json({ status: 200, message: "Product quantity incremented" });
@@ -155,12 +208,10 @@ exports.decrementCartQuantity = async (req, res) => {
 exports.removeProduct = async (req, res) => {
   try {
     const { userId, productId } = req.params;
-    console.log("ok");
     const cart = await Cart.updateOne(
       { owner: userId },
       { $pull: { items: { product: productId } } }
     );
-    console.log(cart);
     if (cart.modifiedCount == 0) {
       return res
         .status(200)
