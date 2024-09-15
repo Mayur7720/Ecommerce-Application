@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FaRupeeSign } from "@react-icons/all-files/fa/FaRupeeSign";
 import { FaStar } from "@react-icons/all-files/fa/FaStar";
-import Modal from "./Modal";
 import useCart from "../hooks/useCart";
-import SelectOption from "./SelectOption";
 import { useNavigate } from "react-router-dom";
-import { DecodeToken } from "../utils/DecodedToken";
+import { DecodeToken, getToken } from "../utils/DecodedToken";
 function Cards({ products }) {
-  const [cartProducts, setCartProducts] = useState([]);
   const [filterProducts, setFilterProducts] = useState({
     category: "not selected",
     rating: "not selected",
@@ -16,17 +13,12 @@ function Cards({ products }) {
   const [filteredData, setFilteredData] = useState(products);
   const { isDialogOpen, setIsDialogOpen, cartItems, setCartItems } = useCart();
   const navigate = useNavigate();
-  // const closeDialog = () => {
-  //   setIsDialogOpen(false);
-  // };
 
-  useEffect(() => {
-    addToCart();
-  }, []);
-  const addToCart = async (e, product) => {
+  const addToCart = useCallback(async (e, product) => {
     e.stopPropagation();
     const userId = DecodeToken();
-    console.log(userId);
+    const token = getToken();
+
     try {
       const response = await fetch(
         `${process.env.API_URL}/cart/${product._id}`,
@@ -34,6 +26,7 @@ function Cards({ products }) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ userId }),
         }
@@ -43,9 +36,8 @@ function Cards({ products }) {
     } catch (err) {
       console.log(err);
     }
-  };
+  }, []);
 
-  // Use useEffect to filter products whenever filterProducts changes
   useEffect(() => {
     const filteredData = products.filter((product) => {
       return (
@@ -59,7 +51,6 @@ function Cards({ products }) {
     });
     setFilteredData(filteredData);
   }, [filterProducts, products]);
-  console.log(cartProducts);
 
   return (
     <>
@@ -72,6 +63,7 @@ function Cards({ products }) {
             >
               <div className="hover:scale-105 ease-in duration-200 hover:shadow-black/40 bg-slate-300 h-3/4 min-h-[190px]">
                 <img
+                  loading="lazy"
                   src={product.images[0] || product.images[idx]}
                   className="w-full object-fit h-4/3"
                   alt="product"
@@ -101,7 +93,6 @@ function Cards({ products }) {
             </div>
           ))
         : "No products found"}
-     
     </>
   );
 }

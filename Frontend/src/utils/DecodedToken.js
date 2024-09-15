@@ -13,3 +13,7 @@ export const DecodeToken = () => {
     return null;
   }
 };
+
+export const getToken=()=>{
+  return localStorage.getItem("token")
+}

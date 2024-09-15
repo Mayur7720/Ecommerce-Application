@@ -70,10 +70,10 @@ exports.addToCart = async (req, res) => {
           price: price * 70,
         },
       ],
-      total: price * 70, // Since this is the only product, total is its totalPrice
+      total: price * 70, 
     });
 
-    await createCart.save(); // Await the save operation
+    await createCart.save(); 
     return res.status(200).json({
       status: 200,
       message: "Cart item added successfully",
@@ -84,7 +84,7 @@ exports.addToCart = async (req, res) => {
     return res.status(500).json({
       status: 500,
       message: "An error occurred while adding item to cart",
-      error: err.message, // Provide the actual error message
+      error: err.message, 
     });
   }
 };
@@ -110,8 +110,7 @@ exports.incrementCartQuantity = async (req, res) => {
   try {
     const { userId, productId } = req.params;
 
-    // Find the cart containing the item
-    const cart = await Cart.findOne({
+       const cart = await Cart.findOne({
       owner: userId,
       "items.product": productId,
     });
@@ -147,14 +146,12 @@ exports.incrementCartQuantity = async (req, res) => {
     // Update total price of the item
     cart.items[itemIndex].totalPrice = cart.items[itemIndex].quantity * cart.items[itemIndex].price;
 
-    // Update total cost of the cart
-    cart.total = cart.items.reduce(
+       cart.total = cart.items.reduce(
       (acc, item) => acc + item.quantity * item.price,
       0
     );
 
-    // Save the updated cart
-    await cart.save();
+      await cart.save();
 
     res.status(200).json({
       status: 200,

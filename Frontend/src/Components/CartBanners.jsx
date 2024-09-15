@@ -9,15 +9,14 @@ import { DecodeToken } from "../utils/DecodedToken";
 function CartBanners() {
   const navigate = useNavigate();
   const [cart, setCart] = useState([]);
-  const [loading, setLoading] = useState(true); // Track loading state
-  const [error, setError] = useState(null); // Track errors
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
     fetchCart();
   }, []);
 
   const fetchCart = async () => {
-    console.log("ok");
     try {
       const userId = DecodeToken();
       const response = await fetch(`${process.env.API_URL}/cart/${userId}`);
@@ -111,11 +110,11 @@ function CartBanners() {
   };
 
   if (loading) {
-    return <div className="text-center">Loading...</div>; // Show loading spinner
+    return <div className="text-center">Loading...</div>;
   }
 
   if (error) {
-    return <div className="text-center text-red-500">{error}</div>; // Show error message
+    return <div className="text-center text-red-500">{error}</div>;
   }
 
   return (
@@ -138,7 +137,7 @@ function CartBanners() {
               <thead className="border border-1 border-slate-300 border-l-0 border-r-0">
                 <tr>
                   <th className="text-left ">Item</th>
-                    <th className="text-left ">Price</th>
+                  <th className="text-left ">Price</th>
                   <th className="text-left "></th>
                   <th className="p-2">Quantity</th>
                   <th className="text-left "></th>
@@ -149,11 +148,11 @@ function CartBanners() {
               <tbody className="border border-1 border-slate-300 border-l-0 border-r-0 border-t-0">
                 {cart.map((item) => (
                   <tr key={item._id}>
-                    <td className="border-b-2  max-w-56 p-2">
+                    <td className="border-b-2 max-w-56 p-2">
                       <div className="flex items-center font-semibold gap-2">
                         <div className="max-w-24 max-h-24 overflow-hidden rounded">
                           <img
-                            className="w-24 h-24"
+                            loading="lazy"
                             src={item.image}
                             alt="product image"
                           />
@@ -165,7 +164,7 @@ function CartBanners() {
                     </td>
                     <td className="border-b-2 max-w-6 truncate ">
                       {item.price}
-                    </td>{" "}
+                    </td>
                     <td className="border-b-2 px-2"></td>
                     <td className="border-b-2 max-w-6">
                       <div className="flex w-full justify-between items-center">
@@ -210,9 +209,15 @@ function CartBanners() {
             </table>
             <article className="  mx-auto w-2/4 ">
               <div className="w-1/2  float-right flex justify-between mt-4 ">
-                <p className="font-bold text-xl text-slate-900 ">Grand Total </p>
-                <span className="
-                font-semibold">=</span>
+                <p className="font-bold text-xl text-slate-900 ">
+                  Grand Total{" "}
+                </p>
+                <span
+                  className="
+                font-semibold"
+                >
+                  =
+                </span>
                 <p className="font-semibold">4000000</p>
               </div>
             </article>
