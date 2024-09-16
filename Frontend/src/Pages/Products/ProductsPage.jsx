@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Banner from "../../Components/Banner";
 import Cards from "../../Components/Cards";
 import ProductFilter from "../../Components/ProductFilter";
+import { DecodeToken, getToken } from "../../utils/DecodedToken";
 
 function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -10,10 +11,12 @@ function ProductsPage() {
   }, []);
   const fetchProducts = async () => {
     try {
+      const token = getToken();
       const res = await fetch(`${process.env.API_URL}/products`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: token,
         },
       });
       const data = await res.json();

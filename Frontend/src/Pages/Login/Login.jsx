@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import FormData from "../../Components/FormData";
 import ErrorMsg from "../../Components/ErrorMsg";
+import { DecodeToken } from "../../utils/DecodedToken";
 
 function Login() {
   const [alert, setAlert] = useState({ show: false, message: "", color: "" });
@@ -49,9 +50,7 @@ function Login() {
   const handleCloseAlert = () => {
     setAlert({ show: false, message: "", color: "" });
   };
-  // if (userData.length > 0) {
-  //   console.log(jwtDecode(userData));
-  // }
+
   return (
     <>
       {alert.show && (

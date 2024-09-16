@@ -4,26 +4,33 @@ import { FaTrash } from "@react-icons/all-files/fa/FaTrash";
 import { FaArrowLeft } from "@react-icons/all-files/fa/FaArrowLeft";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DecodeToken } from "../utils/DecodedToken";
+import { DecodeToken, getToken } from "../utils/DecodedToken";
 
 function CartBanners() {
   const navigate = useNavigate();
   const [cart, setCart] = useState([]);
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null); 
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchCart();
   }, []);
-
   const fetchCart = async () => {
     try {
+      const token = getToken();
       const userId = DecodeToken();
-      const response = await fetch(`${process.env.API_URL}/cart/${userId}`);
+      const response = await fetch(`${process.env.API_URL}/cart/${userId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = await response.json();
-      console.log(data);
-      setCart(data?.cart?.items || []); // Ensure cart is at least an empty array
+      // console.log(data.cart.total);
+      setTotal(data?.cart?.total);
+      setCart(data?.cart?.items || []);
     } catch (err) {
       console.error("Error fetching cart:", err);
       setError("Unable to load cart items. Please try again later.");
@@ -34,11 +41,15 @@ function CartBanners() {
   const handleDelete = async (productId) => {
     try {
       const userId = DecodeToken();
+      const token = getToken();
       console.log(productId);
       const response = await fetch(
         `${process.env.API_URL}/cart/${userId}/product/${productId}/delete`,
         {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -60,11 +71,15 @@ function CartBanners() {
   };
   const handleIncrement = async (e, productId) => {
     try {
+      const token = getToken();
       const userId = DecodeToken();
       const response = await fetch(
         `${process.env.API_URL}/cart/${userId}/product/${productId}/increment`,
         {
           method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -87,10 +102,14 @@ function CartBanners() {
   const handleDecrement = async (e, productId) => {
     try {
       const userId = DecodeToken();
+      const token = getToken();
       const response = await fetch(
         `${process.env.API_URL}/cart/${userId}/product/${productId}/decrement`,
         {
-          method: "PATCH", // Assuming PATCH or POST method for decrement
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       if (!response.ok) {
@@ -216,9 +235,9 @@ function CartBanners() {
                   className="
                 font-semibold"
                 >
-                  =
+                  ={cart !== undefined && console.log(cart)}
                 </span>
-                <p className="font-semibold">4000000</p>
+                <p className="font-semibold">{total}</p>
               </div>
             </article>
           </>
