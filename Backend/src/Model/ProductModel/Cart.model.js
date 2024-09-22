@@ -5,12 +5,12 @@ const CartSchema = new mongoose.Schema(
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     items: [
       {
-        product: { type: mongoose.Schema.Types.ObjectId },
+        product: { type: mongoose.Schema.Types.ObjectId, ref: "Products" },
         image: { type: String, required: true },
         title: { type: String, required: true },
         quantity: { type: Number, default: 1 },
-        totalPrice: { type: Number,default:0 },
-        price:{type:Number,default:0}
+        totalPrice: { type: Number, default: 0 },
+        price: { type: Number, default: 0 },
       },
     ],
     total: {

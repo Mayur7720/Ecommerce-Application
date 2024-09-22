@@ -2,13 +2,15 @@ import { useState, useEffect } from "react";
 import Banner from "../../Components/Banner";
 import Cards from "../../Components/Cards";
 import ProductFilter from "../../Components/ProductFilter";
-import { DecodeToken, getToken } from "../../utils/DecodedToken";
+import { getToken } from "../../utils/DecodedToken";
 
 function ProductsPage() {
   const [products, setProducts] = useState([]);
+  const [onClose, setOnClose] = useState(false);
   useEffect(() => {
     fetchProducts();
   }, []);
+
   const fetchProducts = async () => {
     try {
       const token = getToken();
@@ -20,18 +22,19 @@ function ProductsPage() {
         },
       });
       const data = await res.json();
-      setProducts(data.data.product);
+      setProducts(data.data.products);
     } catch (err) {
       console.log("GET is ", err);
     }
   };
+
   return (
     <section className="bg-slate-200 h-full">
       <Banner />
       <section className="p-4">
         <ProductFilter />
-        <div className="flex gap-5 mx-8 flex-wrap bg-black">
-          <Cards products={products} />
+        <div className="flex gap-5 mx-8 flex-wrap ">
+          <Cards products={products} setProducts={setProducts} />
         </div>
       </section>
     </section>

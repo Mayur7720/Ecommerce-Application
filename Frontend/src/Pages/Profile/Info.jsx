@@ -6,8 +6,8 @@ function Info() {
     e.preventDefault();
   };
   return (
-    <div className="px-12 ">
-      <h2 className="text-center  text-slate-800 font-bold text-2xl">
+    <div className="px-12 h-full">
+      <h2 className=" text-center text-slate-800 font-bold text-2xl">
         Your Info
       </h2>
       <div className="  w-full">
@@ -15,7 +15,7 @@ function Info() {
           <fieldset className="border border-red-300 rounded px-6 py-3">
             <legend className="font-semibold text-lg">Personal Info</legend>
 
-            <div className="grid grid-cols-2 gap-6 mt-6 ">
+            <div className=" grid md:grid-cols-2 gap-6 mt-6 ">
               <Input fname="fname" type="text" label="First Name" />
               <Input fname="lname" type="text" label="Last Name" />
 

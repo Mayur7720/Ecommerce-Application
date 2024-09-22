@@ -28,6 +28,7 @@ const UserSchema = new mongoose.Schema(
         ref: "CartHistory",
       },
     ],
+    wiseList: [{ type: mongoose.Schema.Types.ObjectId, ref: "wiselist" }],
   },
   { timestamps: true }
 );

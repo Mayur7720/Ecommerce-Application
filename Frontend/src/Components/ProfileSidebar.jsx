@@ -6,7 +6,7 @@ function ProfileSidebar() {
   let notActive =
     " border border-l-0 border-t-0 border-b-0 mb-1 py-3 font-semibold pl-3 cursor-pointer hover:bg-slate-50/10  border-transparent";
   return (
-    <div className=" pt-3 col-span-2 flex flex-col gap-4 bg-slate-800 h-screen list-none text-white">
+    <div className="h-full pt-3 col-span-2 flex flex-col gap-4 bg-slate-800  list-none text-white">
       <NavLink
         to="info"
         className={({ isActive }) => (isActive ? active : notActive)}

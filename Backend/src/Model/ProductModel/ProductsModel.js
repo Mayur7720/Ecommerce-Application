@@ -13,6 +13,7 @@ const productsSchema = new mongoose.Schema(
       count: { type: Number },
     },
     images: [],
+
   },
   { timestamps: true }
 );

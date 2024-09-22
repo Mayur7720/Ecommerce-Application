@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../../Model/UserModel/UserModel");
+const WishList = require("../../Model/ProductModel/WishList");
 
 exports.signIn = async (req, res) => {
   try {
@@ -57,3 +58,45 @@ exports.registerUser = async (req, res) => {
   }
 };
 
+exports.getWishlist = async (req, res) => {
+  const userId = req.params;
+  try {
+    const wishlist = await WishList.findOne({ user: userId });
+    console.log(wishlist);
+    if (!wishlist) {
+      res.status(404).json({ message: "product in wishlist not found" });
+    }
+    res
+      .status(200)
+      .json({ message: "getting wishlist successfully", data: wishlist });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+exports.updateWishlist = async (req, res) => {
+  const { userId, productId } = req.params;
+  try {
+    let wishlist = await WishList.findOne({ user: userId });
+    if (!wishlist) {
+      wishlist = new WishList({ user: userId, products: [] });
+    }
+
+    const productIndex = wishlist.products.findIndex(
+      (items) => items.product == productId
+    );
+
+    if (productIndex === -1) {
+      wishlist.products.push({ product: productId });
+      await wishlist.save();
+      return res.status(200).json({ message: "product added in wishlist" });
+    } else {
+      wishlist.products.splice(productIndex, 1);
+      await wishlist.save();
+      return res.status(200).json({ message: "Product removed from wishlist" });
+    }
+  } catch (err) {
+    console.log("error during updating wishlist");
+    res.status(500).json({ message: "server error" });
+  }
+};
