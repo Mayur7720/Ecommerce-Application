@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../../Model/UserModel/UserModel");
 const WishList = require("../../Model/ProductModel/WishList");
+const Products = require("../../Model/ProductModel/ProductsModel");
 
 exports.signIn = async (req, res) => {
   try {
@@ -57,23 +58,37 @@ exports.registerUser = async (req, res) => {
     res.status(500).json({ status: 500, message: "unable to create user" });
   }
 };
-
 exports.getWishlist = async (req, res) => {
-  const userId = req.params;
+  const userId = req.params.userId;
   try {
-    const wishlist = await WishList.findOne({ user: userId });
-    console.log(wishlist);
+    let wishlist = await WishList.findOne({ user: userId });
+
     if (!wishlist) {
-      res.status(404).json({ message: "product in wishlist not found" });
+      return res.status(404).json({ message: "Wishlist not found" });
     }
-    res
-      .status(200)
-      .json({ message: "getting wishlist successfully", data: wishlist });
+    let wishlistProducts = [];
+
+    if (wishlist.products && wishlist.products.length > 0) {
+      const productIds = wishlist.products.map(item => item.product);
+      wishlistProducts = await Products.find({
+        _id: { $in: productIds },
+      });
+
+    }
+
+    if (!wishlistProducts.length) {
+      return res.status(404).json({ message: "No products found in wishlist" });
+    }
+
+    res.status(200).json({
+      message: "Getting wishlist successfully",
+      data: wishlistProducts,
+    });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 exports.updateWishlist = async (req, res) => {
   const { userId, productId } = req.params;
   try {

@@ -18,12 +18,16 @@ exports.getAllProducts = async (req, res) => {
       if (userWishList) {
         wishlist = userWishList.products.map((item) => item.toString());
       }
+      const productsWithlist = products.map((product) => {
+        const isInWishlist = wishlist.includes(product._id.toString());
+        return { ...product._doc, isInWishlist: isInWishlist };
+      });
+      res
+        .status(200)
+        .json({ status: 200, data: { products: productsWithlist } });
     }
-    const productsWithlist = products.map((product) => {
-      const isInWishlist = wishlist.includes(product._id.toString());
-      return { ...product._doc, isInWishlist: isInWishlist };
-    });
-    res.status(200).json({ status: 200, data: { products: productsWithlist } });
+    console.log(products[0]);
+    res.status(200).json({ status: 200, data: { products: products } });
   } catch (err) {
     res.status(400).json({ status: 400, message: "products not found!" });
   }

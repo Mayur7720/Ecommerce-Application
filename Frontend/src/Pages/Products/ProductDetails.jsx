@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import Button from "../../Components/Button";
 import { FaStar } from "@react-icons/all-files/fa/FaStar";
 import { FaRupeeSign } from "@react-icons/all-files/fa/FaRupeeSign";
-import "./ProductDetails.module.css";
 import RatingAndReviews from "../../Components/RatingAndReviews";
 import { DecodeToken, getToken } from "../../utils/DecodedToken";
 function ProductDetails() {
@@ -20,7 +19,7 @@ function ProductDetails() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
+              // Authorization: `Bearer ${token}`,
             },
           }
         );

@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 function RootLayout() {
 
   return (
-      <section className="bg-slate-50 text-slate-300">
+      <section className="bg-slate-50 text-slate-300 ">
         <Navbar />
         <section className="w-full">
           <Outlet />

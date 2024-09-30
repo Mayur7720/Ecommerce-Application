@@ -30,8 +30,12 @@ function Cards({ products, setProducts }) {
           }
         );
         const data = await response.json();
-        console.log(data)
-        setAlert({ show: true, message: `${data.message}`, color: "bg-green-200" });
+        console.log(data);
+        setAlert({
+          show: true,
+          message: `${data.message}`,
+          color: "bg-green-200",
+        });
       } catch (err) {
         console.log(err);
       }
@@ -39,39 +43,49 @@ function Cards({ products, setProducts }) {
     [setCartItems]
   );
 
-  const handleLike = useCallback(async (e, productId) => {
-    e.stopPropagation();
-    const userId = DecodeToken();
-    const token = getToken();
-    try {
-      const response = await fetch(
-        `${process.env.API_URL}/user/${userId}/product/${productId}/wishlist`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = await response.json();
-      setAlert({ show: true, message: `${data.message}`, color: "bg-green-200" });
-      setProducts((prevState) => {
-        return prevState.map((product) =>
-          product._id === productId
-            ? { ...product, isInWishlist: !product.isInWishlist }
-            : product
+  const handleLike = useCallback(
+    async (e, productId) => {
+      e.stopPropagation();
+      const userId = DecodeToken();
+      const token = getToken();
+      try {
+        const response = await fetch(
+          `${process.env.API_URL}/user/${userId}/product/${productId}/wishlist`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-      });
-      setCartItems((prevItems) => [...prevItems, productId]);
-      console.log(data);
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
+
+        const data = await response.json();
+        setAlert({
+          show: true,
+          message: `${data.message}`,
+          color: "bg-green-200",
+        });
+        setProducts((prevState) => {
+          return prevState.map((product) =>
+            product._id === productId
+              ? { ...product, isInWishlist: !product.isInWishlist }
+              : product
+          );
+        });
+        setCartItems((prevItems) => [...prevItems, productId]);
+        console.log(data);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [setProducts]
+  );
+
   const handleCloseAlert = () => {
     setAlert({ show: false, message: "", color: "" });
   };
+
   return (
     <>
       {alert.show && (
@@ -81,18 +95,18 @@ function Cards({ products, setProducts }) {
           onClose={handleCloseAlert}
         />
       )}
-      {products.length > 0
+      {products?.length > 0
         ? products.map((product, idx) => (
             <div
               onClick={() => navigate(`/product_details/${product._id}`)}
               key={product._id}
-              className=" border hover:cursor-pointer max-h-72 flex flex-col w-48 overflow-hidden rounded-md shadow-lg shadow-black/20 relative"
+              className="z-10 border hover:cursor-pointer max-h-72 flex flex-col w-48 overflow-hidden rounded-md shadow-lg shadow-black/20 relative"
             >
-              <div className="hover:shadow-black/40 bg-slate-300 max-h-[190px] min-h-[190px]">
+              <div className=" hover:shadow-black/40 bg-slate-300 max-h-[190px] min-h-[190px]">
                 <img
                   loading="lazy"
                   src={product.images[0] || product.images[idx]}
-                  className="hover:scale-105 ease-in duration-200 w-full object-fit h-4/3"
+                  className=" hover:scale-105 ease-in duration-200 w-full object-fit h-4/3"
                   alt="product"
                 />
               </div>
@@ -110,7 +124,7 @@ function Cards({ products, setProducts }) {
                   <p className="w-10 h-5">
                     <FaHeart
                       onClick={(e) => handleLike(e, product._id)}
-                      className={`stroke-black w-full h-full hover:fill-red-500 hover:stroke-none`}
+                      className={`stroke-black w-full h-full hover:scale-110 hover:transition hover:ease-out`}
                       style={{
                         strokeWidth: product?.isInWishlist ? " " : "3rem",
                         color: product?.isInWishlist ? "#ef4444" : "#f8fafc",
