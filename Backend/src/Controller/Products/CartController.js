@@ -20,7 +20,7 @@ exports.addToCart = async (req, res) => {
     let existCart = await Cart.findOne({ owner: user });
 
     if (existCart) {
-      // Ensure that `existCart.items` is initialized properly
+      
       existCart.items = existCart.items || [];
 
       const productIndex = existCart.items.findIndex((item) =>

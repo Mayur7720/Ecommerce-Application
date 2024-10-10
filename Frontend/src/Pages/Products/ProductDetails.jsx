@@ -39,43 +39,43 @@ function ProductDetails() {
     console.log(e.target);
   };
   return (
-    <section className="text-black px-4 ">
-      <article className="flex gap-3 ">
+    <section className="text-black px-4 mx-auto ">
+      <article className="md:flex md:flex-row flex-col   gap-3 ">
         <div className="">
-          <div className="flex w-[32rem] ">
-            <picture className="w-1/6 active ">
+          <div className="flex flex-col-reverse md:flex-row w-full md:w-[32rem] ">
+            <picture className="flex md:flex-col w-fit md:w-1/6 overflow-hidden active ">
               {singleProduct?.images.map((productImg, idx) => (
                 <img
                   className={`gridImage ${
                     isActive == idx
-                      ? `border-2  border-blue-500 ease duration-200 `
-                      : " border border-1 "
-                  } `}
+                      ? `border-2 w-full object-contain border-blue-500 transition-transform ease duration-200 `
+                      : " border border-1 object-contain"
+                  } w-[73px] h-[73px]`}
                   onClick={() => handleClickImage(idx)}
                   key={idx}
                   src={productImg}
                 />
               ))}
             </picture>
-            <picture className=" h-[46rem] w-full">
+            <picture className="overflow-hidden w-full">
               <img
-                className="w-full border overflow-hidden rounded ease duration-200"
+                className="w-full  md:w-[438px] h-[438px] object-cover md:object-contain  border overflow-hidden rounded ease duration-200"
                 src={singleProduct?.images[isActive]}
                 alt=""
               />
-              <div className="gap-8 mt-2 flex justify-between mb-2">
-                <Button
-                  className="bg-amber-500 w-full text-white font-semibold px-4 py-3"
-                  label={"ADD TO CART"}
-                  onClick={handleClick}
-                />
-                <Button
-                  className="bg-orange-500 w-full text-white font-semibold px-4 py-3"
-                  label={"BUY NOW"}
-                  onClick={handleClick}
-                />
-              </div>
             </picture>
+          </div>
+          <div className="md:ml-[4.5rem] gap-4 mt-2 flex justify-between mb-2">
+            <Button
+              className="bg-amber-500 w-full text-white font-semibold px-4 py-3"
+              label={"ADD TO CART"}
+              onClick={handleClick}
+            />
+            <Button
+              className="bg-orange-500 w-full text-white font-semibold px-4 py-3"
+              label={"BUY NOW"}
+              onClick={handleClick}
+            />
           </div>
         </div>
         <div className=" border p-3 w-full">

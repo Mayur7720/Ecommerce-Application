@@ -26,7 +26,6 @@ exports.getAllProducts = async (req, res) => {
         .status(200)
         .json({ status: 200, data: { products: productsWithlist } });
     }
-    console.log(products[0]);
     res.status(200).json({ status: 200, data: { products: products } });
   } catch (err) {
     res.status(400).json({ status: 400, message: "products not found!" });

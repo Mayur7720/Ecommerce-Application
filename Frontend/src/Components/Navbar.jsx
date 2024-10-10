@@ -44,8 +44,8 @@ function Navbar() {
   }, [isMenuOpen]);
   return (
     <>
-      <header className="bg-white  flex items-center px-2 py-3 shadow-md ">
-        <div className="flex md:justify-between  ">
+      <header className=" bg-white flex items-center md:px-4 py-3 md:p-2 shadow-md overflow-hidden">
+        <div className="flex md:justify-between w-full ">
           <div className="flex items-center bg-amber-400 p-1 font-bold text-lg text-amber-100 italic border-2 border-amber-400 text-center rounded-lg ">
             <FaShoppingBag className=" md:h-6 w-3 fill-white" />
             <span className="ml-2 md:text-md text-xs">Appla Bazar</span>
