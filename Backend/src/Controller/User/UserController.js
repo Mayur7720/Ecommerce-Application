@@ -1,7 +1,23 @@
 const jwt = require("jsonwebtoken");
-const User = require("../../Model/UserModel/UserModel");
+const User = require("../../Model/UserModel/User.model");
 const WishList = require("../../Model/ProductModel/WishList");
 const Products = require("../../Model/ProductModel/ProductsModel");
+
+const generateAccessAndRefershToken = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    const accessToken = user.generateAccessToken();
+    const refershToken = user.generateRefreshToken();
+    user.refershToken = refershToken;
+    await user.save({ validateBeforeSave: false });
+    return { accessToken, refershToken };
+  } catch (err) {
+    throw new ApiError(
+      500,
+      "Something went wrong while generating refresh and access token"
+    );
+  }
+};
 
 exports.signIn = async (req, res) => {
   try {
@@ -13,22 +29,38 @@ exports.signIn = async (req, res) => {
     }
 
     const correctUser = await existUser.checkUser(password);
-    console.log(correctUser);
+
     if (!correctUser) {
       return res
         .status(401)
         .json({ status: 401, message: "username or password is incorrect" });
     }
+    // existUser.status = true;
+    // await existUser.save();
 
-    existUser.status = true;
-    await existUser.save();
-
-    const token = jwt.sign({ userId: existUser._id }, process.env.SECRET_KEY, {
-      expiresIn: "1d",
-    });
+    // const token = jwt.sign({ userId: existUser._id }, process.env.SECRET_KEY, {
+    //   expiresIn: "1d",
+    // });
+    const { accessToken, refershToken } = await generateAccessAndRefershToken(
+      existUser._id
+    );
+    console.log(accessToken, refershToken);
+    const loggedInUser = await User.findById(existUser._id).select("-password");
+    const options = { httpOnly: true, secure: true };
     res
       .status(200)
-      .json({ status: 200, message: "User Login Successfully", token });
+      .cookie("accessToken", accessToken, options)
+      .cookie("refershToken", refershToken, options)
+      .json(
+        new ApiResponse(
+          200,
+          { user: loggedInUser, accessToken },
+          "User logged Successfully "
+        )
+      );
+    // res
+    //   .status(200)
+    //   .json({ status: 200, message: "User Login Successfully", token });
   } catch (err) {
     res.status(500).json({ status: 500, message: "server error" });
   }
@@ -58,6 +90,7 @@ exports.registerUser = async (req, res) => {
     res.status(500).json({ status: 500, message: "unable to create user" });
   }
 };
+
 exports.getWishlist = async (req, res) => {
   const userId = req.params.userId;
   try {
@@ -69,11 +102,10 @@ exports.getWishlist = async (req, res) => {
     let wishlistProducts = [];
 
     if (wishlist.products && wishlist.products.length > 0) {
-      const productIds = wishlist.products.map(item => item.product);
+      const productIds = wishlist.products.map((item) => item.product);
       wishlistProducts = await Products.find({
         _id: { $in: productIds },
       });
-
     }
 
     if (!wishlistProducts.length) {
@@ -87,6 +119,46 @@ exports.getWishlist = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server Error" });
+  }
+};
+
+exports.refershAccessToken = async (req, res) => {
+  const incomingRefreshToken =
+    req.cookies.refereshToken || req.body.refereshToken;
+
+  if (!incomingRefreshToken) {
+    throw new ApiError(401, "Unauthorize request");
+  }
+
+  try {
+    const decodeToken = jwt.verify(
+      incomingRefreshToken,
+      process.env.ACCESS_TOKEN_SECRET
+    );
+    const user = await User.findById(decodeToken?._id);
+    if (!user) {
+      throw new ApiError(401, "Invalid Refresh Token");
+    }
+    if (incomingRefreshToken !== user?.refershToken) {
+      throw new ApiError(401, "Refresh Token is expiry or used");
+    }
+    const options = { httpOnly: true, secure: true };
+    const { accessToken, refereshToken } = await generateAccessAndRefershToken(
+      user._id
+    );
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refershToken", refereshToken, options)
+      .json(
+        new ApiResponse(
+          200,
+          { accessToken, refereshToken },
+          "accessToken refersh Successfully"
+        )
+      );
+  } catch (error) {
+    throw new ApiError(401, error?.message || "Invalid refersh Token");
   }
 };
 exports.updateWishlist = async (req, res) => {

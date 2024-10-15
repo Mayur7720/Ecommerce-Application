@@ -7,12 +7,10 @@ const UsersRoute = require("./src/Routes/UsersRoute");
 const ProductsRoute = require("./src/Routes/ProductsRoute");
 const CartRoute = require("./src/Routes/CartsRoute");
 const cookieParser = require("cookie-parser");
-// const Product = require("./src/Model/ProductModel/ProductsModel");
-// const Category = require("./src/Model/ProductModel/Category.model");
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded);
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static("pubic"));
 app.use(cookieParser());
 const dbURI = process.env.MONGODB_URI;
@@ -24,31 +22,7 @@ mongoose
   })
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
-// async function migrateCategories() {
-//   try {
-//     const distinctCategories = await Product.distinct("category");
-//     const categoryMap = {};
-//     for (let catName of distinctCategories) {
-//       let category = await Category.findOne({ name: catName });
-//       if (!category) {
-//         category = new Category({ name: catName });
-//         await category.save();
-//       }
-//       categoryMap[catName] = category._id;
-//     }
-//     const products = await Product.find({});
-//     for (let product of products) {
-//       const categoryId = categoryMap[product.category];
-//       product.category = categoryId;
-//       await product.save();
-//     }
-//     console.log("Migrate Compelete!");
-//     mongoose.disconnect();
-//   } catch (err) {
-//     console.log("error during migration ", err);
-//   }
-// }
-// migrateCategories();
+
 app.use("/api/v1/user", UsersRoute);
 app.use("/api/v1/products", ProductsRoute);
 app.use("/api/v1/cart", CartRoute);

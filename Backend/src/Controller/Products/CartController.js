@@ -1,6 +1,6 @@
 const Cart = require("../../Model/ProductModel/Cart.model");
 const Products = require("../../Model/ProductModel/ProductsModel");
-const User = require("../../Model/UserModel/UserModel");
+const User = require("../../Model/UserModel/User.model");
 
 exports.addToCart = async (req, res) => {
   try {
@@ -20,7 +20,6 @@ exports.addToCart = async (req, res) => {
     let existCart = await Cart.findOne({ owner: user });
 
     if (existCart) {
-      
       existCart.items = existCart.items || [];
 
       const productIndex = existCart.items.findIndex((item) =>
@@ -70,10 +69,10 @@ exports.addToCart = async (req, res) => {
           price: price * 70,
         },
       ],
-      total: price * 70, 
+      total: price * 70,
     });
 
-    await createCart.save(); 
+    await createCart.save();
     return res.status(200).json({
       status: 200,
       message: "Cart item added successfully",
@@ -84,7 +83,7 @@ exports.addToCart = async (req, res) => {
     return res.status(500).json({
       status: 500,
       message: "An error occurred while adding item to cart",
-      error: err.message, 
+      error: err.message,
     });
   }
 };
@@ -110,7 +109,7 @@ exports.incrementCartQuantity = async (req, res) => {
   try {
     const { userId, productId } = req.params;
 
-       const cart = await Cart.findOne({
+    const cart = await Cart.findOne({
       owner: userId,
       "items.product": productId,
     });
@@ -123,7 +122,9 @@ exports.incrementCartQuantity = async (req, res) => {
     }
 
     // Find the index of the item in the cart
-    const itemIndex = cart.items.findIndex((item) => item.product.equals(productId));
+    const itemIndex = cart.items.findIndex((item) =>
+      item.product.equals(productId)
+    );
 
     if (itemIndex === -1) {
       return res.status(404).json({
@@ -144,14 +145,15 @@ exports.incrementCartQuantity = async (req, res) => {
     cart.items[itemIndex].quantity += 1;
 
     // Update total price of the item
-    cart.items[itemIndex].totalPrice = cart.items[itemIndex].quantity * cart.items[itemIndex].price;
+    cart.items[itemIndex].totalPrice =
+      cart.items[itemIndex].quantity * cart.items[itemIndex].price;
 
-       cart.total = cart.items.reduce(
+    cart.total = cart.items.reduce(
       (acc, item) => acc + item.quantity * item.price,
       0
     );
 
-      await cart.save();
+    await cart.save();
 
     res.status(200).json({
       status: 200,
@@ -162,7 +164,6 @@ exports.incrementCartQuantity = async (req, res) => {
     res.status(500).json({ status: 500, message: "Server error" });
   }
 };
-
 
 exports.decrementCartQuantity = async (req, res) => {
   try {

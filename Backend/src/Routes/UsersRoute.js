@@ -9,7 +9,7 @@ const auth = require("../Middleware/Authentication");
 // }
 router.route("/newUser").post(UserController.registerUser);
 router.route("/login").post(UserController.signIn);
-
+router.route("/refersh-token").post(UserController.refershAccessToken);
 router.route("/:userId/wishlist").get(UserController.getWishlist);
 router
   .route("/:userId/product/:productId/wishlist")
