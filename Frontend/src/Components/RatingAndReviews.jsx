@@ -9,7 +9,7 @@ function RatingAndReviews({ singleProduct }) {
       <div className="flex justify-between items-center">
         <p className="text-xl px-2 font-semibold m-1">Ratings & Reviews</p>
         <Button
-          classname="bg-amber-400 px-2 py-2 m-1 mr-2 shadow-md "
+          classname="bg-amber-400 px-2 py-2 m-1 mr-2 shadow-md font-semibold"
           label="Rate Product"
         />
       </div>

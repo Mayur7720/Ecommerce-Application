@@ -4,8 +4,8 @@ import { FaStar } from "@react-icons/all-files/fa/FaStar";
 import { FaHeart } from "@react-icons/all-files/fa/FaHeart";
 import useCart from "../hooks/useCart";
 import { useNavigate } from "react-router-dom";
-import { DecodeToken, getToken } from "../utils/DecodedToken";
 import ErrorMsg from "../Components/ErrorMsg";
+import axiosApi from "../Api/axiosApi";
 function Cards({ products, setProducts }) {
   const [alert, setAlert] = useState({ show: false, message: "", color: "" });
   const { setCartItems } = useCart();
@@ -14,53 +14,59 @@ function Cards({ products, setProducts }) {
   const addToCart = useCallback(
     async (e, productId) => {
       e.stopPropagation();
-      const userId = DecodeToken();
-      const token = getToken();
-
       try {
-        const response = await fetch(
+        const response = await axiosApi.post(
           `${process.env.API_URL}/cart/${productId}`,
+          {},
           {
-            method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ userId }),
+            withCredentials: true,
           }
         );
-        const data = await response.json();
-        console.log(data);
+        
+        const data = response.data;
         setAlert({
           show: true,
           message: `${data.message}`,
           color: "bg-green-200",
         });
+
       } catch (err) {
-        console.log(err);
+        if (err.response.status == 401) {
+          setAlert({
+            show: true,
+            message: `please Login `,
+            color: "bg-amber-200",
+          });
+        } else {
+          setAlert({
+            show: true,
+            message: `server error`,
+            color: "bg-green-200",
+          });
+        }
       }
     },
     [setCartItems]
   );
-
   const handleLike = useCallback(
     async (e, productId) => {
       e.stopPropagation();
-      const userId = DecodeToken();
-      const token = getToken();
       try {
-        const response = await fetch(
-          `${process.env.API_URL}/user/${userId}/product/${productId}/wishlist`,
+        const response = await axiosApi.patch(
+          `/user/product/${productId}/wishlist`,
+          {},
           {
-            method: "PATCH",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
             },
+            withCredentials: true,
           }
         );
 
-        const data = await response.json();
+        const data = await response.data;
         setAlert({
           show: true,
           message: `${data.message}`,
@@ -120,12 +126,15 @@ function Cards({ products, setProducts }) {
                     {Math.floor(product.price * 70)}
                   </p>
                   <p className=" px-1 md:h-auto md:w-auto flex items-center gap-0.5 rounded-md border md:px-1 bg-green-600 font-normal md:font-medium text-white">
-                    <p className=" text-xs md:text-lg"> {product.rating?.toString().slice(0, 3)}</p>
+                    <span className="block text-xs md:text-lg">
+                      {" "}
+                      {product.rating?.toString().slice(0, 3)}
+                    </span>
                     <FaStar className=" w-fit h-3 md:h-auto fill-white" />
                   </p>
                   <p className="w-6 h-4 md:mt-1 md:w-10 md:h-5">
                     <FaHeart
-                    // size={1}
+                      // size={1}
                       onClick={(e) => handleLike(e, product._id)}
                       className={` stroke-black  w-full h-full hover:scale-110 transition ease-out duration-200`}
                       style={{

@@ -8,18 +8,20 @@ const ProductsRoute = require("./src/Routes/ProductsRoute");
 const CartRoute = require("./src/Routes/CartsRoute");
 const cookieParser = require("cookie-parser");
 
-app.use(cors());
+const corsOptions = {
+  origin: process.env.APP_URL,
+  credentials: true,
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("pubic"));
+// app.use(express.static("public"));
 app.use(cookieParser());
 const dbURI = process.env.MONGODB_URI;
 
 mongoose
-  .connect(dbURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(dbURI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 

@@ -51,7 +51,7 @@ UserSchema.methods.checkUser = async function (password) {
 };
 
 UserSchema.methods.generateAccessToken = async function () {
-  jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
       username: this.username,
@@ -62,8 +62,8 @@ UserSchema.methods.generateAccessToken = async function () {
 };
 
 UserSchema.methods.generateRefreshToken = async function () {
-  jwt.sign({ _id: this._id }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+  return jwt.sign({ _id: this._id }, process.env.REFERSH_TOKEN_SECRET, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
   });
 };
 const User = mongoose.model("User", UserSchema);

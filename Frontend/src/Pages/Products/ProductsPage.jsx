@@ -52,7 +52,6 @@ function ProductsPage() {
 
         setProducts(updatedProducts);
       } else {
-        console.log(allProducts);
         setProducts(allProducts);
       }
     } catch (err) {

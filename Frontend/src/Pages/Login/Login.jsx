@@ -4,46 +4,63 @@ import { jwtDecode } from "jwt-decode";
 import FormData from "../../Components/FormData";
 import ErrorMsg from "../../Components/ErrorMsg";
 import { DecodeToken } from "../../utils/DecodedToken";
+import axiosApi from "../../Api/axiosApi";
 
 function Login() {
   const [alert, setAlert] = useState({ show: false, message: "", color: "" });
   const [userData, setUserData] = useState([]);
   const navigate = useNavigate();
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    withCredentials: true,
+  };
   const handleLogin = async (submitData) => {
     try {
-      const response = await fetch(`${process.env.API_URL}/user/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(submitData),
-      });
-      const data = await response.json();
+      const response = await axiosApi.post(
+        "/user/login",
+        JSON.stringify(submitData),
+        config
+      );
+      const data = await response.data;
+      console.log("data after login ", data);
 
-      localStorage.setItem("token", data.token);
-      if (data.status === 200 || data.status <= 299) {
-        setAlert({
-          show: true,
-          message: data.message,
-          color: "bg-green-200",
-        });
-        navigate("/dashboard");
-        setUserData(data.token);
+      setAlert({
+        show: true,
+        message: data.message,
+        color: "bg-green-200",
+      });
+      navigate("/dashboard");
+      setUserData(data.token);
+    } catch (error) {
+      if (error.response) { // Check if response exists
+        if (error.response.status === 404) {
+          setAlert({
+            show: true,
+            message: "Error: user not found ",
+            color: "bg-red-200",
+          });
+        } else if (error.response.status === 401) {
+          setAlert({
+            show: true,
+            message: "Error: user or password is incorrect ",
+            color: "bg-red-200",
+          });
+        } else {
+          setAlert({
+            show: true,
+            message: "Error: server not responding ",
+            color: "bg-red-200",
+          });
+        }
       } else {
-        console.log("Login failed:", data.message);
         setAlert({
           show: true,
-          message: "Login failed: " + data.message,
+          message: "Error: unable to connect to the server",
           color: "bg-red-200",
         });
       }
-    } catch (error) {
-      setAlert({
-        show: true,
-        message: "Error: Unable to login",
-        color: "bg-red-200",
-      });
-      console.log("Error:", error);
     }
   };
 
@@ -60,7 +77,7 @@ function Login() {
           onClose={handleCloseAlert}
         />
       )}
-      
+
       <FormData label={"Login"} submitedData={handleLogin}>
         <p className="mt-2">
           don't have an{" "}

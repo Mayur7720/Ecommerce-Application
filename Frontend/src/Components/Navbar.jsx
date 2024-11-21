@@ -73,9 +73,9 @@ function Navbar() {
         </div>
 
         <div className="hidden md:flex flex-row items-center gap-4 mr-0 ml-auto font-medium text-slate-600">
-          <button onClick={handleLoginClick} className={`${btnStyle}`}>
+          {/* <button onClick={handleLoginClick} className={`${btnStyle}`}>
             Login <FaUser />
-          </button>
+          </button> */}
           <button onClick={handleLogoutClick} className={`${btnStyle}`}>
             Logout <FaSignOutAlt />
           </button>
@@ -117,9 +117,9 @@ function Navbar() {
                 />
               </div>
 
-              <button onClick={handleLoginClick} className={`${btnStyle} p-2`}>
+              {/* <button onClick={handleLoginClick} className={`${btnStyle} p-2`}>
                 Login <FaUser />
-              </button>
+              </button> */}
               <button onClick={openModal} className={`${btnStyle} p-2`}>
                 Cart <FaShoppingCart />
               </button>

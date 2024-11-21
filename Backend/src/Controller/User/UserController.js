@@ -6,16 +6,19 @@ const Products = require("../../Model/ProductModel/ProductsModel");
 const generateAccessAndRefershToken = async (userId) => {
   try {
     const user = await User.findById(userId);
-    const accessToken = user.generateAccessToken();
-    const refershToken = user.generateRefreshToken();
+
+    const accessToken = await user.generateAccessToken();
+    const refershToken = await user.generateRefreshToken();
+
     user.refershToken = refershToken;
     await user.save({ validateBeforeSave: false });
     return { accessToken, refershToken };
   } catch (err) {
-    throw new ApiError(
-      500,
-      "Something went wrong while generating refresh and access token"
-    );
+    // throw new ApiError(
+    //   500,
+    //   "Something went wrong while generating refresh and access token"
+    // );
+    console.log("something went wrong while generating refersh access tokekn");
   }
 };
 
@@ -41,26 +44,27 @@ exports.signIn = async (req, res) => {
     // const token = jwt.sign({ userId: existUser._id }, process.env.SECRET_KEY, {
     //   expiresIn: "1d",
     // });
+
     const { accessToken, refershToken } = await generateAccessAndRefershToken(
       existUser._id
     );
-    console.log(accessToken, refershToken);
-    const loggedInUser = await User.findById(existUser._id).select("-password");
-    const options = { httpOnly: true, secure: true };
+    const loggedInUser = await User.findById(existUser._id);
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
     res
       .status(200)
       .cookie("accessToken", accessToken, options)
       .cookie("refershToken", refershToken, options)
-      .json(
-        new ApiResponse(
-          200,
-          { user: loggedInUser, accessToken },
-          "User logged Successfully "
-        )
-      );
-    // res
-    //   .status(200)
-    //   .json({ status: 200, message: "User Login Successfully", token });
+      .json({
+        status: 200,
+        message: "User Login Successfully",
+        token: accessToken,
+        refershToken,
+        role: loggedInUser.role,
+      });
   } catch (err) {
     res.status(500).json({ status: 500, message: "server error" });
   }
@@ -127,7 +131,8 @@ exports.refershAccessToken = async (req, res) => {
     req.cookies.refereshToken || req.body.refereshToken;
 
   if (!incomingRefreshToken) {
-    throw new ApiError(401, "Unauthorize request");
+    console.log("Unauthorize request");
+    // throw new ApiError(401, "Unauthorize request");
   }
 
   try {
@@ -137,10 +142,12 @@ exports.refershAccessToken = async (req, res) => {
     );
     const user = await User.findById(decodeToken?._id);
     if (!user) {
-      throw new ApiError(401, "Invalid Refresh Token");
+      console.log("invalid refresh Token");
+      // throw new ApiError(401, "Invalid Refresh Token");
     }
     if (incomingRefreshToken !== user?.refershToken) {
-      throw new ApiError(401, "Refresh Token is expiry or used");
+      console.log("refersh token is  expiry or used");
+      // throw new ApiError(401, "Refresh Token is expiry or used");
     }
     const options = { httpOnly: true, secure: true };
     const { accessToken, refereshToken } = await generateAccessAndRefershToken(
@@ -158,11 +165,14 @@ exports.refershAccessToken = async (req, res) => {
         )
       );
   } catch (error) {
-    throw new ApiError(401, error?.message || "Invalid refersh Token");
+    console.log("invalid refersh Token ");
+    // throw new ApiError(401, error?.message || "Invalid refersh Token");
   }
 };
+
 exports.updateWishlist = async (req, res) => {
-  const { userId, productId } = req.params;
+
+  const { productId } = req.params;
   try {
     let wishlist = await WishList.findOne({ user: userId });
     if (!wishlist) {

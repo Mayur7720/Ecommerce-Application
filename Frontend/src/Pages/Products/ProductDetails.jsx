@@ -4,23 +4,22 @@ import Button from "../../Components/Button";
 import { FaStar } from "@react-icons/all-files/fa/FaStar";
 import { FaRupeeSign } from "@react-icons/all-files/fa/FaRupeeSign";
 import RatingAndReviews from "../../Components/RatingAndReviews";
-import { DecodeToken, getToken } from "../../utils/DecodedToken";
 function ProductDetails() {
   const [singleProduct, setSingleProduct] = useState();
   const [isActive, setIsActive] = useState(0);
   const urlId = useParams();
+
   useEffect(() => {
     const fetchSingleProduct = async (id) => {
       try {
-        const token = getToken();
         const response = await fetch(
           `${process.env.API_URL}/products/${urlId.id}`,
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              // Authorization: `Bearer ${token}`,
             },
+            withCredentials: "include",
           }
         );
         const data = await response.json();

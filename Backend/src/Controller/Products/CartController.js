@@ -5,6 +5,7 @@ const User = require("../../Model/UserModel/User.model");
 exports.addToCart = async (req, res) => {
   try {
     const product = await Products.findById(req.params.id);
+
     if (!product) {
       return res
         .status(404)
@@ -12,7 +13,8 @@ exports.addToCart = async (req, res) => {
     }
 
     const { title, price, images, _id } = product;
-    const user = await User.findById(req.body.userId);
+
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ status: 404, message: "User not found" });
     }
@@ -90,8 +92,7 @@ exports.addToCart = async (req, res) => {
 
 exports.getCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ owner: req.params.id });
-
+    const cart = await Cart.findOne({ owner: req.user._id });
     if (!cart) {
       return res
         .status(404)
@@ -107,10 +108,10 @@ exports.getCart = async (req, res) => {
 
 exports.incrementCartQuantity = async (req, res) => {
   try {
-    const { userId, productId } = req.params;
+    const {productId } = req.params;
 
     const cart = await Cart.findOne({
-      owner: userId,
+      owner: req.user._id,
       "items.product": productId,
     });
 
@@ -167,9 +168,10 @@ exports.incrementCartQuantity = async (req, res) => {
 
 exports.decrementCartQuantity = async (req, res) => {
   try {
-    const { userId, productId } = req.params;
+    
+    const { productId } = req.params;
     const cart = await Cart.findOne({
-      owner: userId,
+      owner: req.user._id,
       "items.product": productId,
     });
     const itemIndex = cart.items.findIndex((item) =>
@@ -205,9 +207,9 @@ exports.decrementCartQuantity = async (req, res) => {
 
 exports.removeProduct = async (req, res) => {
   try {
-    const { userId, productId } = req.params;
+    const { productId } = req.params;
     const cart = await Cart.updateOne(
-      { owner: userId },
+      { owner: req.user._id },
       { $pull: { items: { product: productId } } }
     );
     if (cart.modifiedCount == 0) {

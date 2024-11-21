@@ -4,7 +4,6 @@ const asyncHandler = (reqHandler) => {
   };
 };
 
-
 // const asyncHandler = (fn) => async (req, res, next) => {
 //   try {
 //     await fn(req,res,next)
@@ -14,4 +13,5 @@ const asyncHandler = (reqHandler) => {
 //       .json({ success: false, meassage: err.message });
 //   }
 // };
-modules.export = asyncHandler;
+
+module.exports = asyncHandler;

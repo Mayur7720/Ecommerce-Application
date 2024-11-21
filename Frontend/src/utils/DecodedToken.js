@@ -1,7 +1,10 @@
 import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
+
+//this is for if we use localstorage for storing jwt token old auth system
 
 export const DecodeToken = () => {
-  const token = localStorage.getItem("token");
+  const token = Cookies.get("token");
   if (!token) {
     return null;
   }
@@ -13,7 +16,6 @@ export const DecodeToken = () => {
     return null;
   }
 };
-
-export const getToken=()=>{
-  return localStorage.getItem("token")
-}
+export const getToken = () => {
+  return localStorage.getItem("token");
+};

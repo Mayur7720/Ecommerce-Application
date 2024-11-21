@@ -2,51 +2,48 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import FormData from "../../Components/FormData";
 import ErrorMsg from "../../Components/ErrorMsg";
-
+import axiosApi from "../../Api/axiosApi";
+import { useNavigate } from "react-router-dom";
 function Register() {
   const [alert, setAlert] = useState({ show: false, message: "", color: "" });
-  const handleRegister = (submitData) => {
-    fetch(`http://localhost:4000/api/v1/user/newUser`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(submitData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === 200 || data.status <= 299) {
-          setAlert({
-            show: true,
-            message: data.message,
-            color: "bg-green-200",
-          });
-          console.log("Register successfully:", data);
-          // Handle successful login
-        } else if (data.status === 409) {
-          setAlert({
-            show: true,
-            message: data.message,
-            color: "bg-amber-300",
-          });
-          console.log("Register successfully:", data);
-        } else {
-          console.log("Register failed:", data.message);
-          setAlert({
-            show: true,
-            message: "Register failed: " + data.message,
-            color: "bg-red-200",
-          });
-        }
-      })
-      .catch((error) => {
+  const navigate = useNavigate();
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    withCredentials: true,
+  };
+  const handleRegister = async (submitData) => {
+    try {
+      const response = await axiosApi.post(
+        "/user/newUser",
+        JSON.stringify(submitData),
+        config
+      );
+      console.log("this is data", response.data);
+      const data = await response.data;
+      setAlert({
+        show: true,
+        message: data.message,
+        color: "bg-green-200",
+      });
+      // navigate("/login");
+    } catch (error) {
+      if (error.status === 409) {
+        setAlert({
+          show: true,
+          message: "user already exits",
+          color: "bg-amber-300",
+        });
+        console.log("user already exists:", data);
+      } else {
         setAlert({
           show: true,
           message: "Error: Unable to Register",
           color: "bg-red-200",
         });
-        console.log("Error:", error);
-      });
+      }
+    }
   };
   const handleCloseAlert = () => {
     setAlert({ show: false, message: "", color: "" });

@@ -16,9 +16,9 @@ function Rating() {
   const ratings = [
     { stars: 5, total: 144, id: 13 }, //here should be product id to identify for which product reviews are!
     { stars: 4, total: 30, id: 14 },
-    { stars: 3, total: 145, id: 15 },
-    { stars: 2, total: 1000, id: 16 },
-    { stars: 1, total: 1002382, id: 12 },
+    { stars: 3, total: 15, id: 15 },
+    { stars: 2, total: 10, id: 16 },
+    { stars: 1, total: 182, id: 12 },
   ];
   const HighestRating = findHigestRating(ratings);
 
