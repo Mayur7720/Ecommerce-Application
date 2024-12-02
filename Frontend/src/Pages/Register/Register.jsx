@@ -27,7 +27,7 @@ function Register() {
         message: data.message,
         color: "bg-green-200",
       });
-      // navigate("/login");
+      navigate("/login");
     } catch (error) {
       if (error.status === 409) {
         setAlert({

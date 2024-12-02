@@ -31,7 +31,7 @@ function Login() {
         message: data.message,
         color: "bg-green-200",
       });
-      navigate("/dashboard");
+      navigate("/allProducts");
       setUserData(data.token);
     } catch (error) {
       if (error.response) { // Check if response exists
