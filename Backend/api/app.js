@@ -1,11 +1,11 @@
-require("dotenv").config(); // To use environment variables from a .env file
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
-const UsersRoute = require("./src/Routes/UsersRoute");
-const ProductsRoute = require("./src/Routes/ProductsRoute");
-const CartRoute = require("./src/Routes/CartsRoute");
+const UsersRoute = require("../src/Routes/UsersRoute");
+const ProductsRoute = require("../src/Routes/ProductsRoute");
+const CartRoute = require("../src/Routes/CartsRoute");
 const cookieParser = require("cookie-parser");
 
 const corsOptions = {
@@ -33,3 +33,5 @@ const port = process.env.PORT || 4000;
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+
+module.exports = app;
