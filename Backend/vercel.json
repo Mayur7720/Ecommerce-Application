@@ -1,10 +1,16 @@
 {
-  "functions": {
-    "api/app.js": {
-      "runtime": "@vercel/node"
-    }
-  },
-  "routes": [
-    { "src": "/(.*)", "dest": "api/app.js" }
+  "installCommand":"npm install --legacy-peer-deps",
+  "version":2,
+  "builds":[
+      {
+          "src":"api/app.js",
+          "use":"@vercel/node"
+      },{
+          "src":"src/**/**",
+          "use":"@vercel/static"
+      }
+  ],
+  "routes":[
+      {"src":"/(.*)","dest":"/"}
   ]
 }
