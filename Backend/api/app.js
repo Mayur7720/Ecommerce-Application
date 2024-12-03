@@ -27,7 +27,7 @@ mongoose
 
 app.use("/api/v1/user", UsersRoute);
 app.use("/api/v1/products", ProductsRoute);
-app.use("/api/v1/cart", CartRoute);
+app.use(" ", CartRoute);
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
