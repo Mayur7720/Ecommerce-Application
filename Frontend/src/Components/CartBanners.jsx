@@ -4,7 +4,6 @@ import { FaTrash } from "@react-icons/all-files/fa/FaTrash";
 import { FaArrowLeft } from "@react-icons/all-files/fa/FaArrowLeft";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DecodeToken, getToken } from "../utils/DecodedToken";
 import axiosApi from "../Api/axiosApi";
 import ErrorMsg from "../Components/ErrorMsg";
 
@@ -23,7 +22,7 @@ function CartBanners() {
   }, []);
   const fetchCart = async () => {
     try {
-      const response = await axiosApi.get(`${process.env.API_URL}/cart`, {
+      const response = await axiosApi.get(`/cart`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -55,7 +54,7 @@ function CartBanners() {
   const handleDelete = async (productId) => {
     try {
       const response = await axiosApi.delete(
-        `${process.env.API_URL}/cart/product/${productId}/delete`,
+        `$/cart/product/${productId}/delete`,
         {
           withCredentials: true,
         }
@@ -91,7 +90,7 @@ function CartBanners() {
   const handleIncrement = async (e, productId) => {
     try {
       const response = await axiosApi.patch(
-        `${process.env.API_URL}/cart/product/${productId}/increment`,
+        `/cart/product/${productId}/increment`,
         {},
         {
           headers: {

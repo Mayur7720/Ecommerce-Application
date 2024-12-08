@@ -1,25 +1,25 @@
 import React, { useEffect } from "react";
 import { DecodeToken, getToken } from "../../utils/DecodedToken";
+import axiosApi from "../../Api/axiosApi";
 
 function Wishlist() {
   useEffect(() => {
     fetchWishListData();
   }, []);
   const fetchWishListData = async () => {
-    const userId = DecodeToken();
-    const token = getToken();
+    // const userId = DecodeToken();
+    // const token = getToken();
     try {
-      const response = await fetch(
-        `${process.env.API_URL}/user/${userId}/wishlist`,
+      const response = await axiosApi.get(
+        `/user/${userId}/wishlist`,
         {
-          method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
+          withCredentials:true
         }
       );
-      const data = await response.json();
+      const data = await response.data;
       console.log(data);
     } catch (err) {
       console.log(err);

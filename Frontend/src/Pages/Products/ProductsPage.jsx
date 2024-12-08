@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Banner from "../../Components/Banner";
 import Cards from "../../Components/Cards";
 import { getToken, DecodeToken } from "../../utils/DecodedToken";
+import axiosApi from "../../Api/axiosApi";
 
 function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -13,51 +14,52 @@ function ProductsPage() {
 
   const fetchProductsAndWishlist = async () => {
     try {
-      const token = getToken();
-      const userId = DecodeToken();
-
       setIsLoading(true);
-      const productsRes = await fetch(`${process.env.API_URL}/products`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const productsRes = await axiosApi.get(`/products`, {
+        withCredentials: true,
       });
 
-      const productsData = await productsRes.json();
-      const allProducts = productsData.data.products;
-
+      const allProducts = productsRes.data.data.products;
       setIsLoading(false);
-
-      if (userId) {
-        setIsLoading(true);
-        const wishlistRes = await fetch(
-          `${process.env.API_URL}/user/${userId}/wishlist`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const wishlistData = await wishlistRes.json();
-        const wishlistProducts = wishlistData.data.map((item) => item._id);
-
-        setIsLoading(false);
-
-        const updatedProducts = allProducts.map((product) => ({
-          ...product,
-          isInWishlist: wishlistProducts.includes(product._id),
-        }));
-
-        setProducts(updatedProducts);
-      } else {
-        setProducts(allProducts);
-      }
+      console.log(allProducts);
+      setProducts(allProducts);
     } catch (err) {
       console.log("Error fetching products or wishlist:", err);
     }
   };
+  // const fetchProductsAndWishlist = async () => {
+  //   try {
+
+  //     setIsLoading(true);
+  //     const productsRes = await axiosApi.get(`/products`, {
+  //       withCredentials: true,
+  //     });
+
+  //     const allProducts = productsRes.data.data.products;
+  //     setIsLoading(false);
+
+  //     if (userId) {
+  //       setIsLoading(true);
+  //       const wishlistRes = await axiosApi.get(`/user/${userId}/wishlist`, {
+  //         withCredentials: true,
+  //       });
+  //       const wishlistProducts = wishlistRes.data.data.map((item) => item._id);
+
+  //       setIsLoading(false);
+
+  //       const updatedProducts = allProducts.map((product) => ({
+  //         ...product,
+  //         isInWishlist: wishlistProducts.includes(product._id),
+  //       }));
+
+  //       setProducts(updatedProducts);
+  //     } else {
+  //       setProducts(allProducts);
+  //     }
+  //   } catch (err) {
+  //     console.log("Error fetching products or wishlist:", err);
+  //   }
+  // };
   return (
     <section className="bg-slate-200 ">
       <Banner />

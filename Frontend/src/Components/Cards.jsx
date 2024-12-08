@@ -6,6 +6,8 @@ import useCart from "../hooks/useCart";
 import { useNavigate } from "react-router-dom";
 import ErrorMsg from "../Components/ErrorMsg";
 import axiosApi from "../Api/axiosApi";
+
+
 function Cards({ products, setProducts }) {
   const [alert, setAlert] = useState({ show: false, message: "", color: "" });
   const { setCartItems } = useCart();
@@ -80,7 +82,6 @@ function Cards({ products, setProducts }) {
           );
         });
         setCartItems((prevItems) => [...prevItems, productId]);
-        console.log(data);
       } catch (err) {
         console.log(err);
       }
@@ -127,7 +128,6 @@ function Cards({ products, setProducts }) {
                   </p>
                   <p className=" px-1 md:h-auto md:w-auto flex items-center gap-0.5 rounded-md border md:px-1 bg-green-600 font-normal md:font-medium text-white">
                     <span className="block text-xs md:text-lg">
-                      {" "}
                       {product.rating?.toString().slice(0, 3)}
                     </span>
                     <FaStar className=" w-fit h-3 md:h-auto fill-white" />

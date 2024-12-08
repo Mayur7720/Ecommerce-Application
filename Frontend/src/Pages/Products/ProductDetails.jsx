@@ -4,25 +4,25 @@ import Button from "../../Components/Button";
 import { FaStar } from "@react-icons/all-files/fa/FaStar";
 import { FaRupeeSign } from "@react-icons/all-files/fa/FaRupeeSign";
 import RatingAndReviews from "../../Components/RatingAndReviews";
+import axiosApi from "../../Api/axiosApi";
 function ProductDetails() {
   const [singleProduct, setSingleProduct] = useState();
   const [isActive, setIsActive] = useState(0);
   const urlId = useParams();
 
   useEffect(() => {
-    const fetchSingleProduct = async (id) => {
+    const fetchSingleProduct = async () => {
       try {
-        const response = await fetch(
-          `${process.env.API_URL}/products/${urlId.id}`,
+        const response = await axiosApi.get(
+          `/products/${urlId.id}`,
           {
-            method: "GET",
             headers: {
               "Content-Type": "application/json",
             },
-            withCredentials: "include",
+            withCredentials: true,
           }
         );
-        const data = await response.json();
+        const data = await response.data;
         setSingleProduct(data.singleProduct);
       } catch (err) {
         console.log(err);
