@@ -171,14 +171,12 @@ exports.refershAccessToken = async (req, res) => {
 };
 
 exports.updateWishlist = async (req, res) => {
-
   const { productId } = req.params;
   try {
-    let wishlist = await WishList.findOne({ user: userId });
+    let wishlist = await WishList.findOne({ user: req.user._id });
     if (!wishlist) {
-      wishlist = new WishList({ user: userId, products: [] });
+      wishlist = new WishList({ user: req.user._id, products: [] });
     }
-
     const productIndex = wishlist.products.findIndex(
       (items) => items.product == productId
     );
