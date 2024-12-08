@@ -1,37 +1,61 @@
-const jwt = require("jsonwebtoken");
 const Cart = require("../../Model/ProductModel/Cart.model");
+const jwt = require("jsonwebtoken");
 const Products = require("../../Model/ProductModel/ProductsModel");
 const WishList = require("../../Model/ProductModel/WishList");
 
+
 exports.getAllProducts = async (req, res) => {
-  const token = req.headers.authorization;
-  let userId;
-  if (token) {
-    const decode = jwt.decode(token);
-    userId = decode?.userId;
-  }
   try {
     const products = await Products.find();
-    let wishlist = [];
-    if (userId) {
-      const userWishList = await WishList.findOne({ user: userId });
-      if (userWishList) {
-        wishlist = userWishList.products.map((item) => item.toString());
+    const token =
+      req.cookies?.accessToken ||
+      req.header("Authorization")?.replace("Bearer ", "").trim();
+
+    if (token) {
+      try {
+        // Verify the token
+        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        console.log(decodedToken.username);
+        const userId = decodedToken._id;
+        // Fetch user's wishlist
+        const userWishList = await WishList.findOne({ user: userId });
+        const wishlist = userWishList
+          ? userWishList.products.map((item) => item.product.toString())
+          : [];
+
+        // Add wishlist status to products
+        const productsWithWishlist = products.map((product) => ({
+          ...product._doc,
+          isInWishlist: wishlist.includes(product._id.toString()),
+        }));
+        
+        return res.status(200).json({
+          status: 200,
+          data: { products: productsWithWishlist, userId },
+        });
+      } catch (err) {
+        console.error("Token verification failed:", err.message);
+        // Return products without wishlist for invalid token
+        return res.status(200).json({
+          status: 200,
+          data: { products: products },
+        });
       }
-      const productsWithlist = products.map((product) => {
-        const isInWishlist = wishlist.includes(product._id.toString());
-        return { ...product._doc, isInWishlist: isInWishlist };
-      });
-      res
-        .status(200)
-        .json({ status: 200, data: { products: productsWithlist } });
     }
-    res.status(200).json({ status: 200, data: { products: products } });
+
+    // If no token, return products without wishlist info
+    res.status(200).json({
+      status: 200,
+      data: {products: products },
+    });
   } catch (err) {
-    res.status(400).json({ status: 400, message: "products not found!" });
+    console.error("Error fetching products:", err.message);
+    res.status(400).json({
+      status: 400,
+      message: "Products not found!",
+    });
   }
 };
-
 exports.getSingleProduct = async (req, res) => {
   try {
     const singleProduct = await Products.findById(req.params.id);
